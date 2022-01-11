@@ -11,7 +11,6 @@
 	<groupId>com.trabajodegrado</groupId>
 	<artifactId>freshfruitventas</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>jar</packaging>
 	<name>freshfruitventas</name>
 	<description>Microservicios de ventas Fresh Fruit</description>
 	<properties>
