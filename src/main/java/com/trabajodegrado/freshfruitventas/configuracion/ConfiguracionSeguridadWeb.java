@@ -17,11 +17,10 @@ public class ConfiguracionSeguridadWeb extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-	http.csrf().disable().addFilterAfter(new JWTFiltroAutorizacion(), UsernamePasswordAuthenticationFilter.class)
+    	http.cors().and().csrf().disable().addFilterAfter(new JWTFiltroAutorizacion(), UsernamePasswordAuthenticationFilter.class)
 		.authorizeRequests()
 		.antMatchers(HttpMethod.POST, 
 			"/usuarios/login"
-//			"/paises"
 				)
 		.permitAll()
 		.antMatchers(HttpMethod.GET,
@@ -34,6 +33,6 @@ public class ConfiguracionSeguridadWeb extends WebSecurityConfigurerAdapter {
 		    ).permitAll()
 		.anyRequest()
 		.authenticated();
-	http.cors().and().csrf().disable();
     }
+
 }

@@ -2,6 +2,8 @@ package com.trabajodegrado.freshfruitventas.controladores;
 
 import java.util.List;
 
+import javax.websocket.server.PathParam;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,8 @@ import com.trabajodegrado.freshfruitventas.modelos.Detallesventa;
 import com.trabajodegrado.freshfruitventas.modelos.Movimientosventa;
 import com.trabajodegrado.freshfruitventas.modelos.Ventas;
 import com.trabajodegrado.freshfruitventas.modelos.dto.CambioEstadoVentaDTO;
+import com.trabajodegrado.freshfruitventas.modelos.dto.PaginacionDTO;
+import com.trabajodegrado.freshfruitventas.modelos.dto.RespuestaPaginada;
 import com.trabajodegrado.freshfruitventas.modelos.dto.VentasDTO;
 import com.trabajodegrado.freshfruitventas.negocio.VentasNegocio;
 
@@ -32,28 +36,28 @@ public class VentasController {
     private VentasNegocio ventasNegocio;
 
     @GetMapping("/")
-    public ResponseEntity<List<Ventas>> obtenerLista() {
-    	return new ResponseEntity<>(ventasNegocio.obtenerListaVentas(), HttpStatus.OK);
+    public ResponseEntity<RespuestaPaginada<Ventas>> obtenerLista(@PathParam("paginacion") PaginacionDTO paginacion) {
+    	return new ResponseEntity<>(ventasNegocio.obtenerListaVentas(paginacion), HttpStatus.OK);
     }
     
     @GetMapping("/obtenerListaVentasPorUsuario/{id}")
-    public ResponseEntity<List<Ventas>> obtenerListaVentasPorUsuario(@PathVariable("id") Integer id) {
-    	return new ResponseEntity<>(ventasNegocio.obtenerListaVentasPorUsuario(id), HttpStatus.OK);
+    public ResponseEntity<RespuestaPaginada<Ventas>> obtenerListaVentasPorUsuario(@PathVariable("id") Integer id,@PathParam("paginacion") PaginacionDTO paginacion) {
+    	return new ResponseEntity<>(ventasNegocio.obtenerListaVentasPorUsuario(id, paginacion), HttpStatus.OK);
     }
     
     @GetMapping("/obtenerListaVentasPorEstado/{id}")
-    public ResponseEntity<List<Ventas>> obtenerListaVentasPorEstado(@PathVariable("id") Integer id) {
-    	return new ResponseEntity<>(ventasNegocio.obtenerListaVentasPorEstado(id), HttpStatus.OK);
+    public ResponseEntity<RespuestaPaginada<Ventas>> obtenerListaVentasPorEstado(@PathVariable("id") Integer id,@PathParam("paginacion") PaginacionDTO paginacion) {
+    	return new ResponseEntity<>(ventasNegocio.obtenerListaVentasPorEstado(id,paginacion), HttpStatus.OK);
     }
     
     @GetMapping("/obtenerHistorialVentasPorRepartidor/{id}")
-    public ResponseEntity<List<Ventas>> obtenerHistorialVentasPorRepartidor(@PathVariable("id") Integer id) {
-    	return new ResponseEntity<>(ventasNegocio.obtenerHistorialVentasPorRepartidor(id), HttpStatus.OK);
+    public ResponseEntity<RespuestaPaginada<Ventas>> obtenerHistorialVentasPorRepartidor(@PathVariable("id") Integer id,@PathParam("paginacion") PaginacionDTO paginacion) {
+    	return new ResponseEntity<>(ventasNegocio.obtenerHistorialVentasPorRepartidor(id,paginacion), HttpStatus.OK);
     }
     
     @GetMapping("/obtenerVentasPorRepartidor/{id}")
-    public ResponseEntity<List<Ventas>> obtenerVentasPorRepartidor(@PathVariable("id") Integer id) {
-    	return new ResponseEntity<>(ventasNegocio.obtenerVentasPorRepartidor(id), HttpStatus.OK);
+    public ResponseEntity<RespuestaPaginada<Ventas>> obtenerVentasPorRepartidor(@PathVariable("id") Integer id, @PathParam("paginacion") PaginacionDTO paginacion) {
+    	return new ResponseEntity<>(ventasNegocio.obtenerVentasPorRepartidor(id, paginacion), HttpStatus.OK);
     }
     
     @GetMapping("/{id}")
@@ -61,18 +65,18 @@ public class VentasController {
         return new ResponseEntity<>(ventasNegocio.obtenerVenta(id), HttpStatus.OK);
     }
     
-    @GetMapping("/obtenerlistamovimientos/")
-    public ResponseEntity<List<Movimientosventa>> obtenerlistamovimientos() {
-	return new ResponseEntity<>(ventasNegocio.obtenerListaMovimientos(), HttpStatus.OK);
+    @GetMapping("/obtenerlistamovimientos")
+    public ResponseEntity<RespuestaPaginada<Movimientosventa>> obtenerlistamovimientos(@PathParam("paginacion") PaginacionDTO paginacion) {
+	return new ResponseEntity<>(ventasNegocio.obtenerListaMovimientos(paginacion), HttpStatus.OK);
     }
     
     @GetMapping("/obtenerMovimientosVenta/{id}")
-    public ResponseEntity<List<Movimientosventa>> obtenerMovimientosVenta(Integer id) {
+    public ResponseEntity<List<Movimientosventa>> obtenerMovimientosVenta(@PathVariable("id") Integer id) {
 	return new ResponseEntity<>(ventasNegocio.obtenerMovimientosVenta(id), HttpStatus.OK);
     }
     
     @GetMapping("/obtenerDetallesVenta/{id}")
-    public ResponseEntity<List<Detallesventa>> obtenerDetallesVenta(Integer id) {
+    public ResponseEntity<List<Detallesventa>> obtenerDetallesVenta(@PathVariable("id") Integer id) {
 	return new ResponseEntity<>(ventasNegocio.obtenerDetallesVenta(id), HttpStatus.OK);
     }
     

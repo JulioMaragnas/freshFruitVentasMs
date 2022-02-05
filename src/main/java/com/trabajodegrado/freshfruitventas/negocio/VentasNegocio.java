@@ -1,7 +1,6 @@
 package com.trabajodegrado.freshfruitventas.negocio;
 
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -12,10 +11,13 @@ import javax.mail.internet.MimeMessage;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import com.trabajodegrado.freshfruitventas.configuracion.ContextoSesion;
 import com.trabajodegrado.freshfruitventas.excepciones.ConflictException;
 import com.trabajodegrado.freshfruitventas.excepciones.DatosInvalidosExcepcion;
 import com.trabajodegrado.freshfruitventas.modelos.Detallesventa;
@@ -31,7 +33,9 @@ import com.trabajodegrado.freshfruitventas.modelos.Productos;
 import com.trabajodegrado.freshfruitventas.modelos.Usuarios;
 import com.trabajodegrado.freshfruitventas.modelos.Ventas;
 import com.trabajodegrado.freshfruitventas.modelos.dto.CambioEstadoVentaDTO;
+import com.trabajodegrado.freshfruitventas.modelos.dto.PaginacionDTO;
 import com.trabajodegrado.freshfruitventas.modelos.dto.ProductosDTO;
+import com.trabajodegrado.freshfruitventas.modelos.dto.RespuestaPaginada;
 import com.trabajodegrado.freshfruitventas.modelos.dto.VentasDTO;
 import com.trabajodegrado.freshfruitventas.repositorio.DetallesventaRepositorio;
 import com.trabajodegrado.freshfruitventas.repositorio.EstadosRepositorio;
@@ -92,26 +96,65 @@ public class VentasNegocio {
 	
 	
 	
-	public List<Ventas> obtenerListaVentas() {
-		return ventasRepositorio.findAll();	    	
+	public RespuestaPaginada<Ventas> obtenerListaVentas(PaginacionDTO paginacion) {
+		
+		RespuestaPaginada<Ventas> respuestaPaginada = new RespuestaPaginada<>();
+		Page<Ventas> consultaProductos = ventasRepositorio.findAll(PageRequest.of(paginacion.getPaginaActual(), paginacion.getPaginacion()));
+		
+        respuestaPaginada.setLista(consultaProductos.getContent());
+        respuestaPaginada.setTotal(consultaProductos.getTotalElements());
+        respuestaPaginada.setTotalPaginas(consultaProductos.getTotalPages());
+        
+		return respuestaPaginada;	    	
 	}
 	
-	public List<Ventas> obtenerListaVentasPorUsuario(Integer id) {
-		return ventasRepositorio.findByIdusuario(id);	    	
+	public RespuestaPaginada<Ventas> obtenerListaVentasPorUsuario(Integer id,PaginacionDTO paginacion) {
+		
+		RespuestaPaginada<Ventas> respuestaPaginada = new RespuestaPaginada<>();
+		Page<Ventas> consultaProductos = ventasRepositorio.findByIdusuario(id,PageRequest.of(paginacion.getPaginaActual(), paginacion.getPaginacion()));
+		
+        respuestaPaginada.setLista(consultaProductos.getContent());
+        respuestaPaginada.setTotal(consultaProductos.getTotalElements());
+        respuestaPaginada.setTotalPaginas(consultaProductos.getTotalPages());
+        
+		return respuestaPaginada;	    	
 	}
 	
-	public List<Ventas> obtenerListaVentasPorEstado(Integer id) {
-		return ventasRepositorio.findByIdestado(id);	    	
+	public RespuestaPaginada<Ventas> obtenerListaVentasPorEstado(Integer id, PaginacionDTO paginacion) {
+		RespuestaPaginada<Ventas> respuestaPaginada = new RespuestaPaginada<>();
+		Page<Ventas> consultaProductos = ventasRepositorio.findByIdestado(id,PageRequest.of(paginacion.getPaginaActual(), paginacion.getPaginacion()));
+		
+        respuestaPaginada.setLista(consultaProductos.getContent());
+        respuestaPaginada.setTotal(consultaProductos.getTotalElements());
+        respuestaPaginada.setTotalPaginas(consultaProductos.getTotalPages());
+		return respuestaPaginada;	    	
 	}
 	
-	public List<Ventas> obtenerHistorialVentasPorRepartidor(Integer id) {
+	public RespuestaPaginada<Ventas> obtenerHistorialVentasPorRepartidor(Integer id, PaginacionDTO paginacion) {
 		Estados estadoDespachado = consultarEstados(Constantes.ESTADOS_VENTAS.DESPACHADO);
-		return ventasRepositorio.findByIdusuariorepartidorAndIdestadoNot(id, estadoDespachado.getId());	    	
+		
+		RespuestaPaginada<Ventas> respuestaPaginada = new RespuestaPaginada<>();
+		Page<Ventas> consultaProductos = ventasRepositorio.findByIdusuariorepartidorAndIdestadoNot(id, estadoDespachado.getId(), PageRequest.of(paginacion.getPaginaActual(), paginacion.getPaginacion()));
+		
+        respuestaPaginada.setLista(consultaProductos.getContent());
+        respuestaPaginada.setTotal(consultaProductos.getTotalElements());
+        respuestaPaginada.setTotalPaginas(consultaProductos.getTotalPages());
+		return respuestaPaginada;	   
+		
 	}
 	
-	public List<Ventas> obtenerVentasPorRepartidor(Integer id) {
+	public RespuestaPaginada<Ventas> obtenerVentasPorRepartidor(Integer id, PaginacionDTO paginacion) {
 		Estados estadoDespachado = consultarEstados(Constantes.ESTADOS_VENTAS.DESPACHADO);
-		return ventasRepositorio.findByIdusuariorepartidorAndIdestado(id, estadoDespachado.getId());	    	
+		
+		
+		RespuestaPaginada<Ventas> respuestaPaginada = new RespuestaPaginada<>();
+		Page<Ventas> consultaProductos = ventasRepositorio.findByIdusuariorepartidorAndIdestado(id, estadoDespachado.getId(), PageRequest.of(paginacion.getPaginaActual(), paginacion.getPaginacion()));
+		
+        respuestaPaginada.setLista(consultaProductos.getContent());
+        respuestaPaginada.setTotal(consultaProductos.getTotalElements());
+        respuestaPaginada.setTotalPaginas(consultaProductos.getTotalPages());
+		return respuestaPaginada;
+		
 	}
 	
 	public Ventas obtenerVenta(Integer id) {
@@ -124,8 +167,17 @@ public class VentasNegocio {
 		}
 	}
 	
-	public List<Movimientosventa> obtenerListaMovimientos() {
-		return movimientosventaRepositorio.findAll();	    	
+	public RespuestaPaginada<Movimientosventa> obtenerListaMovimientos(PaginacionDTO paginacion) {
+		
+		RespuestaPaginada<Movimientosventa> respuestaPaginada = new RespuestaPaginada<>();
+		Page<Movimientosventa> consultaProductos = movimientosventaRepositorio.findAll(PageRequest.of(paginacion.getPaginaActual(), paginacion.getPaginacion()));
+		
+        respuestaPaginada.setLista(consultaProductos.getContent());
+        respuestaPaginada.setTotal(consultaProductos.getTotalElements());
+        respuestaPaginada.setTotalPaginas(consultaProductos.getTotalPages());
+        
+		return respuestaPaginada;	    	
+		
 	}
 	
 	public List<Movimientosventa> obtenerMovimientosVenta(Integer idventa) {
@@ -177,7 +229,7 @@ public class VentasNegocio {
 		
 		Ventas nuevaVenta = new Ventas();
 		nuevaVenta.setFecha(new Date());
-		nuevaVenta.setIdusuario(1); //Tomarlo del token
+		nuevaVenta.setIdusuario(ContextoSesion.getUsuarioSesion()); //Tomarlo del token
 		nuevaVenta.setIdestado(estadoCreado.getId());
 		nuevaVenta.setValortotal(valorTotalVenta);
 		
@@ -323,7 +375,7 @@ public class VentasNegocio {
 		Movimientosventa movimiento = new Movimientosventa();
 		movimiento.setFecha(new Date());
 		movimiento.setIdventa(idVenta);
-		movimiento.setIdusuario(1); //Coger del token
+		movimiento.setIdusuario(ContextoSesion.getUsuarioSesion()); //Coger del token
 		movimiento.setIdestado(idEstado);
 		movimiento.setIdmotivo(idMotivo);
 		movimiento.setIdmetausuario(idMetaUsuario);
@@ -351,7 +403,7 @@ public class VentasNegocio {
 					.idinventario(inventarioExistente.get().getId())
 					.cantidadmovimiento(prod.getCantidad())
 					.fecha(new Date())
-					.idusuario(1) //Coger el del token, que debe ser el usuario que está comprando
+					.idusuario(ContextoSesion.getUsuarioSesion()) //Coger el del token, que debe ser el usuario que está comprando
 					.tipomovimiento(Constantes.TIPOS_MOVIMIENTO_INVENTARIO.DISMINUCION)
 					.build()
 				);
@@ -382,7 +434,7 @@ public class VentasNegocio {
 				}else {
 					metasusuarioRepositorio.save(
 						Metasusuario.builder()
-							.idusuario(1) //Cogerlo del token
+							.idusuario(ContextoSesion.getUsuarioSesion()) //Cogerlo del token
 							.idmeta(meta.get().getId())
 							.cantidad(prod.getCantidad())
 							.isactivo(true)
@@ -415,7 +467,7 @@ private void reintegrarInventario(CambioEstadoVentaDTO cambioEstadoVenta) {
 						.idinventario(inventarioExistente.get().getId())
 						.cantidadmovimiento(detalleventa.getCantidad())
 						.fecha(new Date())
-						.idusuario(1) //Coger el del token, que debe ser el usuario que está comprando
+						.idusuario(ContextoSesion.getUsuarioSesion()) //Coger el del token, que debe ser el usuario que está comprando
 						.tipomovimiento(Constantes.TIPOS_MOVIMIENTO_INVENTARIO.ADICION)
 						.idmotivo(cambioEstadoVenta.getIdMotivo())
 						.build()

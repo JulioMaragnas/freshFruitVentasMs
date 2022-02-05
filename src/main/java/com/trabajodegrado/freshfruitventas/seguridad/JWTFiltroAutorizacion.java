@@ -16,6 +16,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.trabajodegrado.freshfruitventas.configuracion.ContextoSesion;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -36,6 +38,7 @@ public class JWTFiltroAutorizacion extends OncePerRequestFilter {
 			if (existJWTToken(request)) {
 				Claims claims = validateToken(request);
 				if (claims.get("authorities") != null) {
+					ContextoSesion.setUsuarioSesion((Integer)claims.get("idusuario"));
 				    setUpSpringAuthentication(claims);
 				} else {
 					SecurityContextHolder.clearContext();
